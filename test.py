@@ -1,6 +1,13 @@
 import gym
-env = gym.make('Breakout-v0')
+import numpy as np
+
+env = gym.make('CartPole-v0')
 env.reset()
-for i in range(1000):
-  env.render()
-  _,d,r,_ = env.step(3)
+i = 0
+done=False
+while done==False:
+    act  = env.action_space.sample()
+    img = env.render(mode='rgb_array')
+    o,r,done,_ = env.step(act)
+    i+=1
+    print i

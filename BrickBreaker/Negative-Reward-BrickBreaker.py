@@ -217,15 +217,13 @@ class DQN(nn.Module):
         self.bn2 = nn.BatchNorm2d(32)
         self.conv3 = nn.Conv2d(32, 32, kernel_size=5, stride=2)
         self.bn3 = nn.BatchNorm2d(32)
-        self.head = nn.Linear(192, 192)
-        self.head2 = nn.Linear(192, 4)
+        self.head = nn.Linear(192, 4)
 
     def forward(self, x):
         x = F.relu(self.bn1(self.conv1(x)))
         x = F.relu(self.bn2(self.conv2(x)))
         x = F.relu(self.bn3(self.conv3(x)))
-        x = F.relu(self.head(x.view(x.size(0), -1)))
-        return self.head2(x)
+        return F.relu(self.head(x.view(x.size(0), -1)))
 
 
 ######################################################################
@@ -382,8 +380,10 @@ def optimize_model():
 
     # Compute Q(s_t, a) - the model computes Q(s_t), then we select the
     # columns of actions taken
+    # print model(state_batch)
     state_action_values = model(state_batch).gather(1, action_batch)
 
+    # print state_action_values
     # Compute V(s_{t+1}) for all next states.
     next_state_values = Variable(torch.zeros(BATCH_SIZE).type(Tensor))
     next_state_values[non_final_mask] = model(non_final_next_states).max(1)[0]
